@@ -1,8 +1,13 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
-from .models import Band, Album, AlbumReview
-from .serializers import BandSerializer, AlbumSerializer, AlbumReviewSerializer
+from rest_framework import generics, permissions, mixins, status
+from .models import Band, Album, AlbumReview, AlbumReviewLike
+from .serializers import (BandSerializer,
+                          AlbumSerializer,
+                          AlbumReviewSerializer,
+                          AllAlbumReviewSerializer,
+                          AlbumReviewLikeSerializer)
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -85,3 +90,36 @@ class AlbumReviewList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         album = Album.objects.get(pk=self.kwargs['pk'])
         serializer.save(user=self.request.user, album=album)
+
+
+class AllAlbumReviewList(generics.ListCreateAPIView):
+    queryset = AlbumReview.objects.all()
+    serializer_class = AllAlbumReviewSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class AlbumReviewLikeCreate(generics.ListCreateAPIView):
+    serializer_class = AlbumReviewLikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # user = self.request.user
+        album_review = AlbumReview.objects.get(pk=self.kwargs['pk'])
+        return AlbumReviewLike.objects.filter(album_review=album_review)
+
+    def perform_create(self, serializer):
+        if self.get_queryset().exists():
+            raise ValidationError('Jūs jau palikote patiktuką šiai apžvalgai!')
+        album_review = AlbumReview.objects.get(pk=self.kwargs['pk'])
+        serializer.save(user=self.request.user, album_review=album_review)
+
+    # def delete(self, request, *args, **kwargs):
+    #     album_review = AlbumReview.objects.get(pk=self.kwargs['pk'], user=self.request.user)
+    #     if album_review:
+    #         self.get_queryset().delete()
+    #         return Response(status=status.HTTP_204_NO_CONTENT)
+    #     else:
+    #         raise ValidationError('Jūs nepalikote patiktuko po šiuo pranešimu!')

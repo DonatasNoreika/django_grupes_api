@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import BandList, BandDetail, AlbumList, AlbumDetail, BandAlbumList, AlbumReviewList
+from .views import (BandList,
+                    BandDetail,
+                    AlbumList,
+                    AlbumDetail,
+                    BandAlbumList,
+                    AlbumReviewList,
+                    AllAlbumReviewList,
+                    AlbumReviewLikeCreate)
 
 urlpatterns = [
     path('bands', BandList.as_view()),
@@ -9,4 +16,6 @@ urlpatterns = [
     path('albums/<int:pk>', AlbumDetail.as_view()),
     path('bands/<int:pk>/albums', BandAlbumList.as_view()),
     path('albums/<int:pk>/reviews', AlbumReviewList.as_view()),
+    path('reviews', AllAlbumReviewList.as_view()),
+    path('reviews/<int:pk>/likes', AlbumReviewLikeCreate.as_view()),
 ]
