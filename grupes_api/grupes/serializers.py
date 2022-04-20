@@ -10,7 +10,7 @@ class BandSerializer(serializers.ModelSerializer):
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = ['id', 'band', 'name']
+        fields = ['id', 'band', 'name', 'image']
 
 
 class AlbumReviewSerializer(serializers.ModelSerializer):
