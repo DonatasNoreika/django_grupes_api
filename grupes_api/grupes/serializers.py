@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Band, Album, AlbumReview, AlbumReviewLike
+from django.contrib.auth.models import User
+
 
 class BandSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,6 +25,7 @@ class AlbumReviewSerializer(serializers.ModelSerializer):
         model = AlbumReview
         fields = ['id', 'album', 'album_id', 'user', 'user_id', 'content', 'score']
 
+
 class AllAlbumReviewSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     user_id = serializers.ReadOnlyField(source='user.id')
@@ -43,3 +46,17 @@ class AlbumReviewLikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlbumReviewLike
         fields = ['id', 'user', 'user_id']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user

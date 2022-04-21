@@ -5,9 +5,11 @@ from .serializers import (BandSerializer,
                           AlbumSerializer,
                           AlbumReviewSerializer,
                           AllAlbumReviewSerializer,
-                          AlbumReviewLikeSerializer)
+                          AlbumReviewLikeSerializer,
+                          UserSerializer)
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -123,3 +125,9 @@ class AlbumReviewLikeCreate(generics.ListCreateAPIView):
     #         return Response(status=status.HTTP_204_NO_CONTENT)
     #     else:
     #         raise ValidationError('Jūs nepalikote patiktuko po šiuo pranešimu!')
+
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.AllowAny, )

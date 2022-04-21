@@ -7,7 +7,8 @@ from .views import (BandList,
                     BandAlbumList,
                     AlbumReviewList,
                     AllAlbumReviewList,
-                    AlbumReviewLikeCreate)
+                    AlbumReviewLikeCreate,
+                    UserCreate)
 
 urlpatterns = [
     path('bands', BandList.as_view()),
@@ -18,4 +19,5 @@ urlpatterns = [
     path('albums/<int:pk>/reviews', AlbumReviewList.as_view()),
     path('reviews', AllAlbumReviewList.as_view()),
     path('reviews/<int:pk>/likes', AlbumReviewLikeCreate.as_view()),
+    path('signup', UserCreate.as_view()),
 ]
